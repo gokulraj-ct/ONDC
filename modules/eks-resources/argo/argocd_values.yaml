@@ -1,0 +1,44 @@
+redis-ha:
+  enabled: true
+
+controller:
+  replicas: 1
+
+server:
+  autoscaling:
+    enabled: true
+    minReplicas: 2
+    
+  ingress:
+    enabled: true
+    annotations:
+      alb.ingress.kubernetes.io/backend-protocol: HTTPS
+      alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:ap-south-1:940482430944:certificate/7bb048d4-fe60-4fef-8f0d-730f82066982
+      alb.ingress.kubernetes.io/group.name: dev-ingress-alb
+      alb.ingress.kubernetes.io/listen-ports: '[{"HTTP":80},{"HTTPS":443}]'
+      alb.ingress.kubernetes.io/load-balancer-name: dev-alb
+      alb.ingress.kubernetes.io/scheme: internet-facing
+      alb.ingress.kubernetes.io/subnets: subnet-0419eae52dfa1ef80, subnet-00e4ebe3e0208913b
+      alb.ingress.kubernetes.io/target-type: ip
+    ingressClassName: alb
+    hosts:
+      - argocd.ondc.tech # Replace with your domain
+    paths:
+      - /
+    tls: [] # Use this section if HTTPS is required
+      # - hosts:
+      #     - <your-domain>
+      #   secretName: argocd-tls # Ensure this secret exists
+
+repoServer:
+  autoscaling:
+    enabled: true
+    minReplicas: 2
+
+applicationSet:
+  replicas: 2
+
+config:
+  params:
+    server.insecure: true
+
